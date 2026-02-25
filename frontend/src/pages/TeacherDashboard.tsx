@@ -92,10 +92,14 @@ const TeacherDashboard = () => {
     // ─── Live Results View ───────────────────────────────────────────────────────
     if (activePoll) {
         return (
-            <div className="min-h-screen px-8 py-8">
-                {/* Header */}
-                <div className="flex justify-between items-center mb-6">
-                    <div />
+            <div className="min-h-screen flex flex-col items-center px-4 py-10">
+                {/* Top nav bar */}
+                <div className="w-full max-w-3xl flex justify-between items-center mb-8">
+                    {/* Brand pill */}
+                    <div className="inline-flex items-center gap-2 bg-[#4f0dce] text-white px-4 py-1.5 rounded-full text-sm font-medium">
+                        <span>✦</span>
+                        <span>Intervue Poll</span>
+                    </div>
                     <button
                         onClick={() => navigate('/teacher/history')}
                         className="flex items-center gap-2 bg-[#7765da] text-white px-5 py-2.5 rounded-full text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer"
@@ -104,7 +108,7 @@ const TeacherDashboard = () => {
                     </button>
                 </div>
 
-                <div className="max-w-2xl">
+                <div className="w-full max-w-3xl">
                     {/* Timer label */}
                     <div className="flex items-center gap-3 mb-4">
                         <span className="text-xl font-bold">Question</span>
@@ -142,117 +146,125 @@ const TeacherDashboard = () => {
 
     // ─── Poll Creation Form ──────────────────────────────────────────────────────
     return (
-        <div className="min-h-screen px-8 py-8">
-            {/* Top branding */}
-            <div className="inline-flex items-center gap-2 bg-[#4f0dce] text-white px-4 py-1.5 rounded-full text-sm font-medium mb-4">
-                <span>✦</span>
-                <span>Intervue Poll</span>
-            </div>
+        <div className="min-h-screen flex flex-col items-center px-4 py-10">
+            {/* Content container */}
+            <div className="w-full max-w-3xl">
 
-            <h1 className="text-4xl mb-1">
-                Let's <strong>Get Started</strong>
-            </h1>
-            <p className="text-[#6e6e6e] mb-8">
-                you'll have the ability to create and manage polls, ask questions, and monitor your students' responses in real-time.
-            </p>
+                {/* Top branding */}
+                <div className="inline-flex items-center gap-2 bg-[#4f0dce] text-white px-4 py-1.5 rounded-full text-sm font-medium mb-6">
+                    <span>✦</span>
+                    <span>Intervue Poll</span>
+                </div>
 
-            {/* Question area */}
-            <div className="flex items-center justify-between mb-2">
-                <label className="font-semibold">Enter your question</label>
-                <select
-                    value={durationSeconds}
-                    onChange={(e) => setDurationSeconds(Number(e.target.value))}
-                    className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm cursor-pointer"
-                >
-                    {TIMER_OPTIONS.map((t) => (
-                        <option key={t} value={t}>
-                            {t} seconds
-                        </option>
-                    ))}
-                </select>
-            </div>
+                {/* Heading */}
+                <h1 className="text-4xl mb-1">
+                    Let's <strong>Get Started</strong>
+                </h1>
+                <p className="text-[#6e6e6e] mb-8">
+                    you'll have the ability to create and manage polls, ask questions, and monitor your students' responses in real-time.
+                </p>
 
-            <div className="relative mb-6">
-                <textarea
-                    value={question}
-                    onChange={(e) => setQuestion(e.target.value.slice(0, 100))}
-                    placeholder="Type your question here..."
-                    className="w-full bg-[#f2f2f2] rounded-lg p-4 text-sm resize-none h-28 outline-none"
-                />
-                <span className="absolute bottom-3 right-4 text-xs text-[#6e6e6e]">
-                    {question.length}/100
-                </span>
-            </div>
+                {/* Question card */}
+                <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-4 shadow-sm">
+                    {/* Question label + timer dropdown */}
+                    <div className="flex items-center justify-between mb-3">
+                        <label className="font-semibold text-sm">Enter your question</label>
+                        <select
+                            value={durationSeconds}
+                            onChange={(e) => setDurationSeconds(Number(e.target.value))}
+                            className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm cursor-pointer bg-white focus:outline-none focus:ring-2 focus:ring-[#7765da]"
+                        >
+                            {TIMER_OPTIONS.map((t) => (
+                                <option key={t} value={t}>
+                                    {t} seconds
+                                </option>
+                            ))}
+                        </select>
+                    </div>
 
-            {/* Options */}
-            <div className="flex gap-12 mb-6">
-                <div className="flex-1">
-                    <p className="font-semibold mb-3">Edit Options</p>
+                    {/* Textarea */}
+                    <div className="relative">
+                        <textarea
+                            value={question}
+                            onChange={(e) => setQuestion(e.target.value.slice(0, 100))}
+                            placeholder="Type your question here..."
+                            className="w-full bg-[#f7f7f8] rounded-xl p-4 text-sm resize-none h-28 outline-none focus:ring-2 focus:ring-[#7765da] transition-shadow"
+                        />
+                        <span className="absolute bottom-3 right-4 text-xs text-[#9e9e9e]">
+                            {question.length}/100
+                        </span>
+                    </div>
+                </div>
+
+                {/* Options card */}
+                <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm mb-6">
+                    {/* Column headers */}
+                    <div className="flex gap-4 mb-4">
+                        <p className="flex-1 font-semibold text-sm">Edit Options</p>
+                        <p className="font-semibold text-sm w-36 text-right">Is it Correct?</p>
+                    </div>
+
+                    {/* Option rows */}
                     <div className="flex flex-col gap-3">
                         {options.map((opt, index) => (
                             <div key={index} className="flex items-center gap-3">
+                                {/* Number badge */}
                                 <div className="w-7 h-7 rounded-full bg-[#5767d0] flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                                     {index + 1}
                                 </div>
+                                {/* Text input */}
                                 <input
                                     type="text"
                                     value={opt.text}
                                     onChange={(e) => updateOptionText(index, e.target.value)}
                                     placeholder={`Option ${index + 1}`}
-                                    className="flex-1 bg-[#f2f2f2] rounded-lg px-3 py-2.5 text-sm outline-none"
+                                    className="flex-1 bg-[#f7f7f8] rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[#7765da] transition-shadow"
                                 />
+                                {/* Yes / No radios */}
+                                <div className="flex items-center gap-4 w-36 justify-end">
+                                    <label className="flex items-center gap-1.5 cursor-pointer">
+                                        <input
+                                            type="radio"
+                                            name={`correct-${index}`}
+                                            checked={opt.isCorrect === true}
+                                            onChange={() => updateOptionCorrect(index, true)}
+                                            className="accent-[#4f0dce]"
+                                        />
+                                        <span className="text-sm">Yes</span>
+                                    </label>
+                                    <label className="flex items-center gap-1.5 cursor-pointer">
+                                        <input
+                                            type="radio"
+                                            name={`correct-${index}`}
+                                            checked={opt.isCorrect === false}
+                                            onChange={() => updateOptionCorrect(index, false)}
+                                            className="accent-[#4f0dce]"
+                                        />
+                                        <span className="text-sm">No</span>
+                                    </label>
+                                </div>
                             </div>
                         ))}
                     </div>
 
+                    {/* Add more option */}
                     <button
                         onClick={addOption}
-                        className="mt-4 border-2 border-[#7765da] text-[#7765da] px-5 py-1.5 rounded-full text-sm font-medium hover:bg-purple-50 transition-colors cursor-pointer"
+                        className="mt-5 border-2 border-[#7765da] text-[#7765da] px-5 py-1.5 rounded-full text-sm font-medium hover:bg-purple-50 transition-colors cursor-pointer"
                     >
                         + Add More option
                     </button>
                 </div>
 
-                {/* Correct answer toggles */}
-                <div>
-                    <p className="font-semibold mb-3">Is it Correct?</p>
-                    <div className="flex flex-col gap-3">
-                        {options.map((opt, index) => (
-                            <div key={index} className="flex items-center gap-4 h-10">
-                                <label className="flex items-center gap-1.5 cursor-pointer">
-                                    <input
-                                        type="radio"
-                                        name={`correct-${index}`}
-                                        checked={opt.isCorrect === true}
-                                        onChange={() => updateOptionCorrect(index, true)}
-                                        className="accent-[#4f0dce]"
-                                    />
-                                    <span className="text-sm">Yes</span>
-                                </label>
-                                <label className="flex items-center gap-1.5 cursor-pointer">
-                                    <input
-                                        type="radio"
-                                        name={`correct-${index}`}
-                                        checked={opt.isCorrect === false}
-                                        onChange={() => updateOptionCorrect(index, false)}
-                                        className="accent-[#4f0dce]"
-                                    />
-                                    <span className="text-sm">No</span>
-                                </label>
-                            </div>
-                        ))}
-                    </div>
+                {/* Footer: Ask Question CTA */}
+                <div className="flex justify-end">
+                    <button
+                        onClick={handleAskQuestion}
+                        className="bg-[#7765da] text-white px-10 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity cursor-pointer shadow-md"
+                    >
+                        Ask Question
+                    </button>
                 </div>
-            </div>
-
-            {/* Footer divider + Ask Question CTA */}
-            <div className="border-t border-gray-200 pt-4 flex justify-end">
-                <button
-                    onClick={handleAskQuestion}
-                    className="bg-[#7765da] text-white px-8 py-3 rounded-full font-medium hover:opacity-90 transition-opacity cursor-pointer"
-                >
-                    Ask Question
-                </button>
             </div>
 
             <ChatFAB />
