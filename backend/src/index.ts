@@ -19,7 +19,10 @@ const io = new SocketServer(httpServer, {
     cors: {
         origin: frontendUrl,
         methods: ['GET', 'POST'],
+        credentials: true,
     },
+    pingTimeout: 60000,
+    pingInterval: 25000,
 });
 
 // Middleware
@@ -45,3 +48,18 @@ connectDB().then(() => {
         console.log(`Server running on port ${PORT}`);
     });
 });
+
+// Graceful shutdown
+const shutdown = (signal: string) => {
+    console.log(`${signal} signal received: closing HTTP server`);
+    io.close(() => {
+        console.log('Socket.io connections closed.');
+        httpServer.close(() => {
+            console.log('HTTP server closed.');
+            process.exit(0);
+        });
+    });
+};
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
