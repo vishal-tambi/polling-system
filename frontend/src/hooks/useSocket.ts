@@ -9,18 +9,15 @@ const useSocket = (role: 'teacher' | 'student' | null) => {
     useEffect(() => {
         if (!role) return;
 
-        // Set the role before connecting
-        socket.io.opts.query = { role };
-
-        socket.connect();
+        // Only connect if not already connected
+        if (!socket.connected) {
+            socket.io.opts.query = { role };
+            socket.connect();
+        }
         isConnected.current = true;
 
-        return () => {
-            if (isConnected.current) {
-                socket.disconnect();
-                isConnected.current = false;
-            }
-        };
+        // No cleanup disconnect — socket is a module-level singleton and should
+        // stay alive across route changes. It will disconnect naturally on tab close.
     }, [role]);
 
     return socket;

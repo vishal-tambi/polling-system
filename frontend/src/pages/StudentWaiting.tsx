@@ -1,12 +1,16 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePoll } from '../context/PollContext';
+import useSocket from '../hooks/useSocket';
 import BrandPill from '../components/BrandPill';
 import ChatFAB from '../components/ChatFAB';
 
 const StudentWaiting = () => {
-    const { activePoll } = usePoll();
+    const { activePoll, role } = usePoll();
     const navigate = useNavigate();
+
+    // Keep socket connected while waiting for a question
+    useSocket(role);
 
     // If a poll becomes active, jump to the poll page
     useEffect(() => {

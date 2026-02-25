@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePoll } from '../context/PollContext';
 import usePollTimer from '../hooks/usePollTimer';
+import useSocket from '../hooks/useSocket';
 import PollCard from '../components/PollCard';
 import ChatFAB from '../components/ChatFAB';
 import socket from '../lib/socket';
@@ -10,6 +11,7 @@ import { toast } from 'sonner';
 const StudentPoll = () => {
     const {
         activePoll,
+        role,
         studentId,
         serverTimeOffset,
         hasVoted,
@@ -17,6 +19,9 @@ const StudentPoll = () => {
         selectedOptionIndex,
         setSelectedOptionIndex,
     } = usePoll();
+
+    // Keep socket connected during the poll
+    useSocket(role);
     const navigate = useNavigate();
 
     // Calculate how many seconds are left (server-synced)
