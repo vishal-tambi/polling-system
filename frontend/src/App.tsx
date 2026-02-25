@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { usePoll } from './context/PollContext';
+import LandingPage from './pages/LandingPage';
 import RoleSelect from './pages/RoleSelect';
 import StudentName from './pages/StudentName';
 import StudentWaiting from './pages/StudentWaiting';
@@ -17,7 +18,8 @@ function App() {
       <div className="min-h-screen bg-white relative">
         <Routes>
           {/* Landing */}
-          <Route path="/" element={<RoleSelect />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/select" element={<RoleSelect />} />
 
           {/* Student flow */}
           <Route path="/student/name" element={<StudentName />} />
