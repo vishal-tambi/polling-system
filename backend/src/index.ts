@@ -31,7 +31,7 @@ app.use(express.json());
 
 // Health check endpoint (for UptimeRobot)
 app.get('/health', (req, res) => {
-    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+    res.status(200).json({ status: 'ok', message: "Still alive. Unlike my social life. 💀" });
 });
 
 // REST routes
