@@ -107,11 +107,18 @@ export const castVote = async (
         // Save the vote — the unique index will throw if they already voted
         await Vote.create({ pollId, studentIdentifier, optionIndex });
 
-        // Increment the vote count on the chosen option
-        poll.options[optionIndex].votes += 1;
-        await poll.save();
+        // Use atomic $inc with positional operator to reliably increment the vote
+        // count in MongoDB. Direct mutation of subdocument arrays (poll.options[i].votes++)
+        // is not detected as dirty by Mongoose and save() will skip writing it.
+        const updatedPoll = await Poll.findOneAndUpdate(
+            { _id: pollId, 'options': { $exists: true } },
+            { $inc: { [`options.${optionIndex}.votes`]: 1 } },
+            { new: true }
+        );
 
-        return { success: true, message: 'Vote recorded', poll };
+        if (!updatedPoll) return { success: false, message: 'Failed to record vote' };
+
+        return { success: true, message: 'Vote recorded', poll: updatedPoll };
     } catch (error: any) {
         // MongoDB duplicate key error code = 11000
         if (error.code === 11000) {
