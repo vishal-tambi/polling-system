@@ -74,10 +74,11 @@ const Step = ({ num, title, desc, delay }: { num: number; title: string; desc: s
 };
 
 /* ─── Stat ─────────────────────────────────────────────────────────────────── */
-const Stat = ({ target, suffix, label }: { target: number; suffix: string; label: string }) => {
+const Stat = ({ target, suffix, label, icon }: { target: number; suffix: string; label: string; icon: string }) => {
     const { ref, count } = useCountUp(target);
     return (
         <div ref={ref} className="stat-item">
+            <span className="stat-icon">{icon}</span>
             <div className="stat-number">{count}{suffix}</div>
             <div className="stat-label">{label}</div>
         </div>
@@ -238,27 +239,93 @@ const LandingPage = () => {
 
             {/* ── STATS ── */}
             <section className="stats-section">
-                <Stat target={100} suffix="%" label="Real-time updates" />
-                <div className="stats-divider" />
-                <Stat target={30} suffix="s" label="Time to first poll" />
-                <div className="stats-divider" />
-                <Stat target={0} suffix=" setup" label="Zero configuration" />
-                <div className="stats-divider" />
-                <Stat target={99} suffix="%" label="Uptime reliability" />
+                <Stat target={100} suffix="%" label="Real-time updates" icon="⚡" />
+                <Stat target={30} suffix="s" label="Time to first poll" icon="⏱" />
+                <Stat target={500} suffix="+" label="Polls conducted" icon="📊" />
+                <Stat target={99} suffix="%" label="Uptime reliability" icon="🔒" />
             </section>
 
             {/* ── FOOTER ── */}
             <footer className="landing-footer">
-                <div className="footer-brand">
-                    <span className="nav-brand-star">✦</span> Intervue Poll
+                {/* Glow blobs */}
+                <div className="footer-glow footer-glow-1" />
+                <div className="footer-glow footer-glow-2" />
+
+                {/* CTA Band */}
+                <div className="footer-cta-band">
+                    <div className="footer-cta-eyebrow">✦ Ready to go live?</div>
+                    <h2 className="footer-cta-headline">
+                        Start your first poll in<br /><span>under 30 seconds</span>
+                    </h2>
+                    <p className="footer-cta-sub">
+                        No accounts, no setup, no downloads. Just open the app, pick a role, and you're live.
+                    </p>
+                    <button onClick={() => navigate('/select')} className="cta-primary">
+                        Get Started Free →
+                    </button>
                 </div>
-                <p className="footer-sub">
-                    Engage your classroom in real-time. Built for modern educators.
-                </p>
-                <button onClick={() => navigate('/select')} className="cta-primary" style={{ marginTop: 24 }}>
-                    Get Started Free →
-                </button>
-                <p className="footer-copy">© 2025 Intervue. Made with ❤️ for classrooms everywhere.</p>
+
+                {/* Main columns */}
+                <div className="footer-main">
+                    {/* Brand col */}
+                    <div>
+                        <div className="footer-brand">
+                            <div className="footer-brand-star">✦</div>
+                            Intervue Poll
+                        </div>
+                        <p className="footer-desc">
+                            The fastest way to engage your classroom with live polls, instant results, and zero friction.
+                        </p>
+                        <div className="footer-badges">
+                            <span className="footer-badge">⚡ Real-time</span>
+                            <span className="footer-badge">🔒 No login</span>
+                            <span className="footer-badge">📱 All devices</span>
+                        </div>
+                    </div>
+
+                    {/* Product links */}
+                    <div>
+                        <div className="footer-col-title">Product</div>
+                        <ul className="footer-col-links">
+                            <li><a href="#features">Features</a></li>
+                            <li><a href="#how">How it works</a></li>
+                            <li><a href="#">Changelog</a></li>
+                            <li><a href="#">Roadmap</a></li>
+                        </ul>
+                    </div>
+
+                    {/* Use cases */}
+                    <div>
+                        <div className="footer-col-title">Use cases</div>
+                        <ul className="footer-col-links">
+                            <li><a href="#">Classrooms</a></li>
+                            <li><a href="#">Workshops</a></li>
+                            <li><a href="#">Interviews</a></li>
+                            <li><a href="#">Webinars</a></li>
+                        </ul>
+                    </div>
+
+                    {/* Company */}
+                    <div>
+                        <div className="footer-col-title">Company</div>
+                        <ul className="footer-col-links">
+                            <li><a href="#">About</a></li>
+                            <li><a href="#">Privacy</a></li>
+                            <li><a href="#">Terms</a></li>
+                            <li><a href="#">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                {/* Bottom bar */}
+                <div className="footer-bottom">
+                    <p className="footer-copy">© 2025 Intervue. Made with ❤️ for classrooms everywhere.</p>
+                    <div className="footer-socials">
+                        <a href="#" className="footer-social-btn" title="GitHub">🐱</a>
+                        <a href="#" className="footer-social-btn" title="Twitter">🐦</a>
+                        <a href="#" className="footer-social-btn" title="LinkedIn">🔗</a>
+                    </div>
+                </div>
             </footer>
 
         </div>
