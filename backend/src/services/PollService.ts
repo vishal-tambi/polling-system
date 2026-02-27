@@ -2,12 +2,11 @@ import Poll, { IPoll } from '../models/Poll';
 import Vote from '../models/Vote';
 import { Server as SocketServer } from 'socket.io';
 
-// We keep track of all connected student socket IDs
-// so we can know how many students are online
-const connectedStudents = new Set<string>();
+// Maps socketId → student name so the teacher can see who's connected
+const connectedStudents = new Map<string, string>();
 
-export const addStudent = (socketId: string) => {
-    connectedStudents.add(socketId);
+export const addStudent = (socketId: string, name: string) => {
+    connectedStudents.set(socketId, name);
 };
 
 export const removeStudent = (socketId: string) => {
@@ -16,6 +15,11 @@ export const removeStudent = (socketId: string) => {
 
 export const getConnectedStudentCount = () => {
     return connectedStudents.size;
+};
+
+// Returns the full participant list for broadcasting to clients
+export const getConnectedStudents = (): { socketId: string; name: string }[] => {
+    return Array.from(connectedStudents.entries()).map(([socketId, name]) => ({ socketId, name }));
 };
 
 // Create a new poll (does NOT start the timer yet)

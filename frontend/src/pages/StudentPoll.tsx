@@ -18,10 +18,11 @@ const StudentPoll = () => {
         setHasVoted,
         selectedOptionIndex,
         setSelectedOptionIndex,
+        studentName,
     } = usePoll();
 
-    // Keep socket connected during the poll
-    useSocket(role);
+    // Connect socket and register student name
+    useSocket(role, studentName);
     const navigate = useNavigate();
 
     // Calculate how many seconds are left (server-synced)

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { Poll, ChatMessage, Role } from '../types/poll.types';
+import type { Poll, ChatMessage, Role, Participant } from '../types/poll.types';
 import api from '../lib/api';
 import socket from '../lib/socket';
 import { toast } from 'sonner';
@@ -21,6 +21,7 @@ interface PollContextType {
     isChatOpen: boolean;
     setIsChatOpen: (open: boolean) => void;
     isKicked: boolean;
+    participants: Participant[];
 }
 
 const PollContext = createContext<PollContextType | null>(null);
@@ -48,6 +49,7 @@ export const PollProvider = ({ children }: { children: React.ReactNode }) => {
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [isKicked, setIsKicked] = useState(false);
+    const [participants, setParticipants] = useState<Participant[]>([]);
 
     // Persist role and name to sessionStorage whenever they change
     useEffect(() => {
@@ -112,6 +114,11 @@ export const PollProvider = ({ children }: { children: React.ReactNode }) => {
             setChatMessages((prev) => [...prev, message]);
         });
 
+        // Participant list updated (student joined, left, or was kicked)
+        socket.on('students:updated', (list: Participant[]) => {
+            setParticipants(list);
+        });
+
         // Vote error (already voted, etc.)
         socket.on('poll:vote_error', ({ message }: { message: string }) => {
             toast.error(message);
@@ -128,6 +135,7 @@ export const PollProvider = ({ children }: { children: React.ReactNode }) => {
             socket.off('poll:closed');
             socket.off('student:kicked');
             socket.off('chat:message');
+            socket.off('students:updated');
             socket.off('poll:vote_error');
             socket.off('poll:error');
         };
@@ -152,6 +160,7 @@ export const PollProvider = ({ children }: { children: React.ReactNode }) => {
                 isChatOpen,
                 setIsChatOpen,
                 isKicked,
+                participants,
             }}
         >
             {children}

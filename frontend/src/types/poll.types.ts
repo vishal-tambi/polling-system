@@ -25,3 +25,8 @@ export interface ChatMessage {
 }
 
 export type Role = 'teacher' | 'student' | null;
+
+export interface Participant {
+    socketId: string;
+    name: string;
+}

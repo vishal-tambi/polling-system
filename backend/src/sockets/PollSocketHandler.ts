@@ -7,12 +7,16 @@ const setupPollSocket = (io: SocketServer) => {
     io.on('connection', (socket: Socket) => {
         console.log('Client connected:', socket.id);
 
-        // Client tells us their role when they connect
         const role = socket.handshake.query.role as string;
 
-        if (role === 'student') {
-            PollService.addStudent(socket.id);
-        }
+        // ─── Student: Register with name ──────────────────────────────────────────
+        // Students emit this right after connecting so the server knows their name
+        socket.on('student:register', (data: { name: string }) => {
+            if (role !== 'student') return;
+            PollService.addStudent(socket.id, data.name);
+            // Broadcast updated participant list to everyone (teacher sees it in real-time)
+            io.emit('students:updated', PollService.getConnectedStudents());
+        });
 
         // ─── Teacher: Create a new poll ───────────────────────────────────────────
         socket.on(
@@ -31,7 +35,6 @@ const setupPollSocket = (io: SocketServer) => {
                         return;
                     }
 
-                    // Create and immediately start the poll
                     const poll = await PollService.createPoll(
                         data.question,
                         data.options,
@@ -40,7 +43,6 @@ const setupPollSocket = (io: SocketServer) => {
 
                     const startedPoll = await PollService.startPoll(String(poll._id), io);
 
-                    // Broadcast the new poll to everyone (teacher + all students)
                     io.emit('poll:started', {
                         poll: startedPoll,
                         serverTime: new Date().toISOString(),
@@ -72,7 +74,6 @@ const setupPollSocket = (io: SocketServer) => {
                         return;
                     }
 
-                    // Broadcast updated vote counts to everyone
                     io.emit('poll:vote_updated', { poll: result.poll });
                 } catch (error) {
                     console.error('poll:vote error:', error);
@@ -83,7 +84,16 @@ const setupPollSocket = (io: SocketServer) => {
 
         // ─── Teacher: Kick a student ─────────────────────────────────────────────
         socket.on('student:kick', (data: { socketId: string }) => {
+            // Notify the student they're kicked, then forcefully disconnect them
             io.to(data.socketId).emit('student:kicked');
+            const targetSocket = io.sockets.sockets.get(data.socketId);
+            if (targetSocket) {
+                targetSocket.disconnect(true);
+            } else {
+                // Socket already gone — still clean up our map and notify others
+                PollService.removeStudent(data.socketId);
+                io.emit('students:updated', PollService.getConnectedStudents());
+            }
         });
 
         // ─── Chat: Send a message ────────────────────────────────────────────────
@@ -96,7 +106,6 @@ const setupPollSocket = (io: SocketServer) => {
                         role: data.role,
                         text: data.text,
                     });
-                    // Broadcast to everyone
                     io.emit('chat:message', message);
                 } catch (error) {
                     console.error('chat:send error:', error);
@@ -108,6 +117,8 @@ const setupPollSocket = (io: SocketServer) => {
         socket.on('disconnect', () => {
             console.log('Client disconnected:', socket.id);
             PollService.removeStudent(socket.id);
+            // Broadcast updated list so teacher sees the student leave in real-time
+            io.emit('students:updated', PollService.getConnectedStudents());
         });
     });
 };

@@ -6,11 +6,11 @@ import BrandPill from '../components/BrandPill';
 import ChatFAB from '../components/ChatFAB';
 
 const StudentWaiting = () => {
-    const { activePoll, role } = usePoll();
+    const { activePoll, role, studentName } = usePoll();
     const navigate = useNavigate();
 
-    // Keep socket connected while waiting for a question
-    useSocket(role);
+    // Connect socket and register student name
+    useSocket(role, studentName);
 
     // If a poll becomes active, jump to the poll page
     useEffect(() => {

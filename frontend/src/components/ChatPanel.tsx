@@ -5,7 +5,7 @@ import socket from '../lib/socket';
 type Tab = 'chat' | 'participants';
 
 const ChatPanel = () => {
-    const { chatMessages, setIsChatOpen, role, studentName } = usePoll();
+    const { chatMessages, participants, setIsChatOpen, role, studentName } = usePoll();
     const [activeTab, setActiveTab] = useState<Tab>('chat');
     const [messageText, setMessageText] = useState('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -29,6 +29,12 @@ const ChatPanel = () => {
     }, [chatMessages]);
 
     const myName = role === 'teacher' ? 'Teacher' : studentName;
+
+    const handleKickStudent = (socketId: string) => {
+        if (role === 'teacher') {
+            socket.emit('student:kick', { socketId });
+        }
+    };
 
     return (
         <>
@@ -113,15 +119,33 @@ const ChatPanel = () => {
                 {/* Participants Tab */}
                 {activeTab === 'participants' && (
                     <div className="flex-1 overflow-y-auto p-4">
-                        <div className="flex justify-between text-xs font-medium text-[#6e6e6e] mb-3 px-1">
+                        <div className="flex justify-between items-center text-xs font-semibold text-[#6e6e6e] mb-4 px-1 border-b border-gray-200 pb-2">
                             <span>Name</span>
                             {role === 'teacher' && <span>Action</span>}
                         </div>
 
-                        {/* Participant list — teacher can kick students */}
-                        <p className="text-sm text-[#6e6e6e] text-center mt-4">
-                            Participant list updates in real-time via socket events.
-                        </p>
+                        {/* Participant list */}
+                        {participants.length === 0 ? (
+                            <p className="text-sm text-[#6e6e6e] text-center mt-6">
+                                No students connected yet.
+                            </p>
+                        ) : (
+                            <div className="flex flex-col gap-4">
+                                {participants.map((p) => (
+                                    <div key={p.socketId} className="flex justify-between items-center px-1">
+                                        <span className="text-sm font-bold text-[#1a1a1a]">{p.name}</span>
+                                        {role === 'teacher' && (
+                                            <button
+                                                onClick={() => handleKickStudent(p.socketId)}
+                                                className="text-sm font-bold text-[#4e81e3] hover:underline cursor-pointer"
+                                            >
+                                                Kick out
+                                            </button>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
