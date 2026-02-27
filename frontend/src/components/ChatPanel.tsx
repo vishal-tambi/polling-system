@@ -45,7 +45,7 @@ const ChatPanel = () => {
             />
 
             {/* Panel */}
-            <div className="fixed right-0 top-0 bottom-0 w-96 bg-white shadow-2xl z-50 flex flex-col">
+            <div className="fixed right-6 bottom-24 w-96 h-[500px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 flex flex-col overflow-hidden">
                 {/* Tabs */}
                 <div className="flex border-b border-gray-200">
                     <button
