@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import CustomCursor from '../components/CustomCursor';
 
 /* ─── Scroll-reveal hook ───────────────────────────────────────────────────── */
 function useReveal() {
@@ -100,6 +101,7 @@ const LandingPage = () => {
 
     return (
         <div className="landing-root">
+            <CustomCursor />
 
             {/* ── NAVBAR ── */}
             <nav className={`landing-nav ${scrolled ? 'landing-nav--scrolled' : ''}`}>
