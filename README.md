@@ -6,7 +6,7 @@
 ![Backend](https://img.shields.io/badge/Backend-Node.js%20%2B%20Express-green)
 ![Database](https://img.shields.io/badge/Database-MongoDB-brightgreen)
 ![Realtime](https://img.shields.io/badge/Realtime-Socket.io-orange)
-![Deploy](https://img.shields.io/badge/Deploy-Vercel%20%2B%20Railway-purple)
+![Deploy](https://img.shields.io/badge/Deploy-Vercel%20%2B%20Render-purple)
 
 ---
 
@@ -17,7 +17,7 @@
 | Frontend | React 18, TypeScript, Vite, Tailwind CSS v3, React Router v7, Socket.io Client, Lenis, Sonner |
 | Backend | Node.js, Express 5, TypeScript, Socket.io, Mongoose |
 | Database | MongoDB Atlas |
-| Deploy | Frontend → Vercel, Backend → Railway |
+| Deploy | Frontend → Vercel, Backend → Render |
 
 ---
 
@@ -76,7 +76,7 @@ FRONTEND_URL=https://your-frontend.vercel.app
 
 **`frontend/.env`**
 ```env
-VITE_BACKEND_URL=https://your-backend.railway.app
+VITE_BACKEND_URL=https://your-backend.render.app
 ```
 
 ---
