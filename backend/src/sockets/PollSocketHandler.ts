@@ -2,14 +2,14 @@ import { Server as SocketServer, Socket } from 'socket.io';
 import * as PollService from '../services/PollService';
 import ChatMessage from '../models/ChatMessage';
 
-// This file only handles socket wiring — no business logic
+// This file only handles socket wiring no business logic
 const setupPollSocket = (io: SocketServer) => {
     io.on('connection', (socket: Socket) => {
         console.log('Client connected:', socket.id);
 
         const role = socket.handshake.query.role as string;
 
-        // ─── Student: Register with name ──────────────────────────────────────────
+        // Student:Register with name 
         // Students emit this right after connecting so the server knows their name
         socket.on('student:register', (data: { name: string }) => {
             if (role !== 'student') return;
@@ -18,7 +18,7 @@ const setupPollSocket = (io: SocketServer) => {
             io.emit('students:updated', PollService.getConnectedStudents());
         });
 
-        // ─── Teacher: Create a new poll ───────────────────────────────────────────
+        // Teacher:Create a new poll 
         socket.on(
             'poll:create',
             async (data: {
@@ -54,7 +54,7 @@ const setupPollSocket = (io: SocketServer) => {
             }
         );
 
-        // ─── Student: Cast a vote ────────────────────────────────────────────────
+        //Student: Cast a vote 
         socket.on(
             'poll:vote',
             async (data: {
@@ -82,7 +82,7 @@ const setupPollSocket = (io: SocketServer) => {
             }
         );
 
-        // ─── Teacher: Kick a student ─────────────────────────────────────────────
+        //Teacher: Kick a student
         socket.on('student:kick', (data: { socketId: string }) => {
             // Notify the student they're kicked, then forcefully disconnect them
             io.to(data.socketId).emit('student:kicked');
@@ -96,7 +96,7 @@ const setupPollSocket = (io: SocketServer) => {
             }
         });
 
-        // ─── Chat: Send a message ────────────────────────────────────────────────
+        //Chat: Send a message
         socket.on(
             'chat:send',
             async (data: { senderName: string; role: 'teacher' | 'student'; text: string }) => {
@@ -113,7 +113,7 @@ const setupPollSocket = (io: SocketServer) => {
             }
         );
 
-        // ─── Disconnect ──────────────────────────────────────────────────────────
+        //Disconnect
         socket.on('disconnect', () => {
             console.log('Client disconnected:', socket.id);
             PollService.removeStudent(socket.id);
