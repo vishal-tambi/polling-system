@@ -1,84 +1,100 @@
 import { useEffect, useRef } from 'react';
 
 const COLORS = ['#8b5cf6', '#c084fc', '#e879f9', '#2dd4bf', '#f472b6'];
+const POOL_SIZE = 400; // Max particles allowed on screen at once
 
 class Particle {
-    x: number;
-    y: number;
-    size: number;
-    angle: number;
-    speedMultiplier: number;
-    speedX: number;
-    speedY: number;
-    life: number;
-    maxLife: number;
-    color: string;
-    rotationSpeed: number;
+    active: boolean = false;
+    x: number = 0;
+    y: number = 0;
+    size: number = 0;
+    angle: number = 0;
+    speedX: number = 0;
+    speedY: number = 0;
+    life: number = 0;
+    maxLife: number = 0;
+    color: string = '';
+    rotationSpeed: number = 0;
 
-    constructor(x: number, y: number, color: string) {
+    // We no longer constructor-initialize, we "spawn" to reuse the same memory chunk
+    spawn(x: number, y: number, color: string) {
+        this.active = true;
         this.x = x;
         this.y = y;
-        this.size = Math.random() * 8 + 4; // 4 to 12
+        this.size = Math.random() * 8 + 4;
         this.angle = Math.random() * Math.PI * 2;
-        this.speedMultiplier = Math.random() * 2 + 1;
-        this.speedX = (Math.random() - 0.5) * this.speedMultiplier;
-        this.speedY = (Math.random() - 0.5) * this.speedMultiplier;
+
+        const speedMultiplier = Math.random() * 2 + 1;
+        this.speedX = (Math.random() - 0.5) * speedMultiplier;
+        this.speedY = (Math.random() - 0.5) * speedMultiplier;
+
         this.life = 0;
-        this.maxLife = Math.random() * 30 + 40; // 40 to 70 frames
+        this.maxLife = Math.random() * 30 + 40;
         this.color = color;
         this.rotationSpeed = (Math.random() - 0.5) * 0.2;
     }
 
     update() {
+        if (!this.active) return;
         this.x += this.speedX;
         this.y += this.speedY;
         this.angle += this.rotationSpeed;
         this.life++;
-        // slight drag
+
         this.speedX *= 0.98;
         this.speedY *= 0.98;
+
+        if (this.life >= this.maxLife) {
+            this.active = false;
+        }
     }
 
-    draw(ctx: CanvasRenderingContext2D) {
+    draw(ctx: CanvasRenderingContext2D, dpr: number) {
+        if (!this.active) return;
+
         const progress = this.life / this.maxLife;
         const opacity = 1 - progress;
         const currentSize = this.size * (1 - progress);
 
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        ctx.rotate(this.angle);
-
         ctx.globalAlpha = opacity;
         ctx.fillStyle = this.color;
 
-        // Draw triangle
+        // Uses setTransform instead of save/restore for better iteration performance
+        ctx.setTransform(dpr, 0, 0, dpr, this.x * dpr, this.y * dpr);
+        ctx.rotate(this.angle);
+
         ctx.beginPath();
-        // Pointing up: (0, -size), bottom right: (size*cos30, size*sin30), bottom left: (-size*cos30, size*sin30)
         ctx.moveTo(0, -currentSize);
         ctx.lineTo(currentSize * 0.866, currentSize * 0.5);
         ctx.lineTo(-currentSize * 0.866, currentSize * 0.5);
         ctx.closePath();
         ctx.fill();
-
-        ctx.restore();
     }
 }
 
 const CustomCursor = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const particles = useRef<Particle[]>([]);
 
-    // Use an object to hold the ref value, but initialize it inside useEffect
-    // to avoid accessing window during SSR (though this shouldn't be an issue in Vite SPA).
+    // 1. Maintain a single pre-allocated pool (Data-Oriented approach)
+    const particlePool = useRef<Particle[]>([]);
+    const poolIndex = useRef(0);
+
     const lastMouse = useRef({ x: 0, y: 0 });
     const isReady = useRef(false);
+
+    // 2. Track whether the loop is currently running to prevent dual-loops
+    const isAnimating = useRef(false);
 
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
-
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { alpha: true }); // optimize browser compositing
         if (!ctx) return;
+
+        // Initialize particle pool once
+        if (particlePool.current.length === 0) {
+            particlePool.current = Array.from({ length: POOL_SIZE }, () => new Particle());
+        }
 
         if (!isReady.current) {
             lastMouse.current = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
@@ -86,14 +102,58 @@ const CustomCursor = () => {
         }
 
         let animationFrameId: number;
+        let dpr = window.devicePixelRatio || 1;
+
+        const render = () => {
+            // Need to apply DPR identity prior to clearing
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            let hasActiveParticles = false;
+
+            for (let i = 0; i < POOL_SIZE; i++) {
+                const p = particlePool.current[i];
+                if (p.active) {
+                    p.update();
+                    p.draw(ctx, dpr);
+                    hasActiveParticles = true;
+                }
+            }
+
+            // 4. Auto-pause the simulation when done
+            if (hasActiveParticles) {
+                isAnimating.current = true;
+                animationFrameId = requestAnimationFrame(render);
+            } else {
+                isAnimating.current = false;
+            }
+        };
 
         const resize = () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            dpr = window.devicePixelRatio || 1;
+            // 3. Retina display pixel ratio fixes
+            canvas.width = window.innerWidth * dpr;
+            canvas.height = window.innerHeight * dpr;
+            canvas.style.width = `${window.innerWidth}px`;
+            canvas.style.height = `${window.innerHeight}px`;
+
+            // Re-render immediately on resize to prevent flickering
+            if (!isAnimating.current) render();
         };
 
         window.addEventListener('resize', resize);
         resize();
+
+        const spawnParticle = (x: number, y: number) => {
+            const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+            const particle = particlePool.current[poolIndex.current];
+            particle.spawn(x, y, color);
+
+            // Ring buffer increments
+            poolIndex.current = (poolIndex.current + 1) % POOL_SIZE;
+        };
+
+
 
         const onMouseMove = (e: MouseEvent) => {
             const currentMouse = { x: e.clientX, y: e.clientY };
@@ -101,51 +161,37 @@ const CustomCursor = () => {
             const dy = currentMouse.y - lastMouse.current.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
 
-            // Spawn particles based on distance moved
             const spawnCount = Math.min(Math.floor(dist / 5), 10);
 
             if (spawnCount > 0) {
                 for (let i = 0; i < spawnCount; i++) {
-                    const color = COLORS[Math.floor(Math.random() * COLORS.length)];
                     const t = Math.random();
                     const px = lastMouse.current.x + dx * t;
                     const py = lastMouse.current.y + dy * t;
-                    particles.current.push(new Particle(px, py, color));
+                    spawnParticle(px, py);
                 }
-            } else {
-                // Even if moving slowly, spawn at least one occasionally
-                if (Math.random() > 0.5) {
-                    const color = COLORS[Math.floor(Math.random() * COLORS.length)];
-                    particles.current.push(new Particle(currentMouse.x, currentMouse.y, color));
-                }
+            } else if (Math.random() > 0.5) {
+                spawnParticle(currentMouse.x, currentMouse.y);
             }
+
             lastMouse.current = currentMouse;
-        };
 
-        window.addEventListener('mousemove', onMouseMove);
-
-        const render = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            const newParticles = [];
-            for (const p of particles.current) {
-                p.update();
-                if (p.life < p.maxLife) {
-                    p.draw(ctx);
-                    newParticles.push(p);
-                }
+            // Reboot the animation loop if it was asleep
+            if (!isAnimating.current) {
+                isAnimating.current = true;
+                render();
             }
-            particles.current = newParticles;
-
-            animationFrameId = requestAnimationFrame(render);
         };
 
+        window.addEventListener('mousemove', onMouseMove, { passive: true }); // Optimize wheel/scroll jank
+
+        // Kick off first render
         render();
 
         return () => {
             window.removeEventListener('resize', resize);
             window.removeEventListener('mousemove', onMouseMove);
-            cancelAnimationFrame(animationFrameId);
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
         };
     }, []);
 
@@ -156,9 +202,7 @@ const CustomCursor = () => {
                 position: 'fixed',
                 top: 0,
                 left: 0,
-                width: '100vw',
-                height: '100vh',
-                pointerEvents: 'none',
+                pointerEvents: 'none', // Critical, allows clicks to pass through
                 zIndex: 9999
             }}
         />
