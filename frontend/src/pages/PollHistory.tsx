@@ -72,7 +72,7 @@ const PollHistory = () => {
                         </p>
                         <button
                             onClick={() => navigate('/teacher')}
-                            className="bg-[#7765da] text-white px-8 py-3 rounded-full font-medium hover:opacity-90 transition-opacity cursor-pointer"
+                            className="bg-gradient-to-r from-[#8F64E1] to-[#1D68BD] text-white px-8 py-3 rounded-full font-medium hover:opacity-90 transition-opacity cursor-pointer"
                         >
                             Create a Poll
                         </button>

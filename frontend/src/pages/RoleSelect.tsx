@@ -67,7 +67,7 @@ const RoleSelect = () => {
             <button
                 onClick={handleContinue}
                 disabled={!selected}
-                className="bg-[#7765da] text-white px-12 py-3 rounded-full font-medium disabled:opacity-40 cursor-pointer hover:opacity-90 transition-opacity"
+                className="bg-gradient-to-r from-[#8F64E1] to-[#1D68BD] text-white px-12 py-3 rounded-full font-medium disabled:opacity-40 cursor-pointer hover:opacity-90 transition-opacity"
             >
                 Continue
             </button>

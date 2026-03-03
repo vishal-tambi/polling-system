@@ -108,7 +108,7 @@ const ChatPanel = () => {
                             />
                             <button
                                 onClick={sendMessage}
-                                className="bg-[#7765da] text-white px-4 py-2 rounded-full text-sm font-medium hover:opacity-90 cursor-pointer"
+                                className="bg-gradient-to-r from-[#8F64E1] to-[#1D68BD] text-white px-4 py-2 rounded-full text-sm font-medium hover:opacity-90 cursor-pointer"
                             >
                                 Send
                             </button>

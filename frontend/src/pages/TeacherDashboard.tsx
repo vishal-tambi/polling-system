@@ -100,7 +100,7 @@ const TeacherDashboard = () => {
                     <BrandPill />
                     <button
                         onClick={() => navigate('/teacher/history')}
-                        className="flex items-center gap-2 bg-[#7765da] text-white px-5 py-2.5 rounded-full text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer"
+                        className="flex items-center gap-2 bg-gradient-to-r from-[#8F64E1] to-[#1D68BD] text-white px-5 py-2.5 rounded-full text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer"
                     >
                         👁 View Poll history
                     </button>
@@ -130,7 +130,7 @@ const TeacherDashboard = () => {
                     <div className="flex justify-end mt-6">
                         <button
                             onClick={handleAskNew}
-                            className="bg-[#7765da] text-white px-8 py-3 rounded-full font-medium hover:opacity-90 transition-opacity cursor-pointer"
+                            className="bg-gradient-to-r from-[#8F64E1] to-[#1D68BD] text-white px-8 py-3 rounded-full font-medium hover:opacity-90 transition-opacity cursor-pointer"
                         >
                             + Ask a new question
                         </button>
@@ -255,7 +255,7 @@ const TeacherDashboard = () => {
                 <div className="flex justify-end">
                     <button
                         onClick={handleAskQuestion}
-                        className="bg-[#7765da] text-white px-10 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity cursor-pointer shadow-md"
+                        className="bg-gradient-to-r from-[#8F64E1] to-[#1D68BD] text-white px-10 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity cursor-pointer shadow-md"
                     >
                         Ask Question
                     </button>

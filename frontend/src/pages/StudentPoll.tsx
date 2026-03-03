@@ -100,7 +100,7 @@ const StudentPoll = () => {
                         <button
                             onClick={handleSubmit}
                             disabled={selectedOptionIndex === null}
-                            className="bg-[#7765da] text-white px-10 py-3 rounded-full font-medium disabled:opacity-40 hover:opacity-90 transition-opacity cursor-pointer"
+                            className="bg-gradient-to-r from-[#8F64E1] to-[#1D68BD] text-white px-10 py-3 rounded-full font-medium disabled:opacity-40 hover:opacity-90 transition-opacity cursor-pointer"
                         >
                             Submit
                         </button>
