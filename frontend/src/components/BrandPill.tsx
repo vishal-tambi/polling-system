@@ -1,10 +1,13 @@
+import brandPillImage from '../assets/brand-pill.png';
+
 // Small reusable brand pill shown at top of every screen
-const BrandPill = () => {
+interface BrandPillProps {
+    className?: string;
+}
+
+const BrandPill = ({ className = "h-8 mb-4 w-auto" }: BrandPillProps) => {
     return (
-        <div className="inline-flex items-center gap-2 bg-[#4f0dce] text-white px-4 py-1.5 rounded-full text-sm font-medium mb-4">
-            <span>✦</span>
-            <span>Intervue Poll</span>
-        </div>
+        <img src={brandPillImage} alt="Intervue Poll" className={className} />
     );
 };
 

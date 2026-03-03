@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CustomCursor from '../components/CustomCursor';
+import BrandPill from '../components/BrandPill';
 
 /* ─── Scroll-reveal hook ───────────────────────────────────────────────────── */
 function useReveal() {
@@ -105,10 +106,7 @@ const LandingPage = () => {
 
             {/* ── NAVBAR ── */}
             <nav className={`landing-nav ${scrolled ? 'landing-nav--scrolled' : ''}`}>
-                <div className="nav-brand">
-                    <span className="nav-brand-star">✦</span>
-                    <span>Intervue Poll</span>
-                </div>
+                <BrandPill className="h-8 w-auto cursor-pointer" />
                 <div className="nav-links">
                     <a href="#features" className="nav-link">Features</a>
                     <a href="#how" className="nav-link">How it works</a>
@@ -271,10 +269,7 @@ const LandingPage = () => {
                 <div className="footer-main">
                     {/* Brand col */}
                     <div>
-                        <div className="footer-brand">
-                            <div className="footer-brand-star">✦</div>
-                            Intervue Poll
-                        </div>
+                        <BrandPill className="h-8 w-auto mb-4" />
                         <p className="footer-desc">
                             The fastest way to engage your classroom with live polls, instant results, and zero friction.
                         </p>

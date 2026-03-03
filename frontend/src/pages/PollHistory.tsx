@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../lib/api';
 import type { Poll } from '../types/poll.types';
 import PollCard from '../components/PollCard';
+import BrandPill from '../components/BrandPill';
 
 const PollHistory = () => {
     const [polls, setPolls] = useState<Poll[]>([]);
@@ -28,10 +29,7 @@ const PollHistory = () => {
             <div className="w-full max-w-3xl">
 
                 {/* Brand pill */}
-                <div className="inline-flex items-center gap-2 bg-[#4f0dce] text-white px-4 py-1.5 rounded-full text-sm font-medium mb-6">
-                    <span>✦</span>
-                    <span>Intervue Poll</span>
-                </div>
+                <BrandPill className="h-8 mb-6 w-auto" />
 
                 {/* Page header */}
                 <div className="flex items-center gap-4 mb-8">

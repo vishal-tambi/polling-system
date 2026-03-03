@@ -5,6 +5,7 @@ import usePollTimer from '../hooks/usePollTimer';
 import useSocket from '../hooks/useSocket';
 import PollCard from '../components/PollCard';
 import ChatFAB from '../components/ChatFAB';
+import BrandPill from '../components/BrandPill';
 import socket from '../lib/socket';
 import { toast } from 'sonner';
 
@@ -96,10 +97,7 @@ const TeacherDashboard = () => {
                 {/* Top nav bar */}
                 <div className="w-full max-w-3xl flex justify-between items-center mb-8">
                     {/* Brand pill */}
-                    <div className="inline-flex items-center gap-2 bg-[#4f0dce] text-white px-4 py-1.5 rounded-full text-sm font-medium">
-                        <span>✦</span>
-                        <span>Intervue Poll</span>
-                    </div>
+                    <BrandPill />
                     <button
                         onClick={() => navigate('/teacher/history')}
                         className="flex items-center gap-2 bg-[#7765da] text-white px-5 py-2.5 rounded-full text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer"
@@ -151,10 +149,7 @@ const TeacherDashboard = () => {
             <div className="w-full max-w-3xl">
 
                 {/* Top branding */}
-                <div className="inline-flex items-center gap-2 bg-[#4f0dce] text-white px-4 py-1.5 rounded-full text-sm font-medium mb-6">
-                    <span>✦</span>
-                    <span>Intervue Poll</span>
-                </div>
+                <BrandPill />
 
                 {/* Heading */}
                 <h1 className="text-4xl mb-1">
